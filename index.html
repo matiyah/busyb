@@ -191,6 +191,11 @@ h1 em{font-style:normal;color:var(--clay)}
   .split .phone{max-width:250px}
 }
 
+/* two phones in a row (intelligence section) */
+.duo{display:flex;gap:24px;flex-wrap:wrap}
+.duo .phone{width:238px}
+@media (max-width:560px){.duo{gap:14px}.duo .phone{width:calc(50% - 7px)}}
+
 /* ── spec list ────────────────────────────────────────────────────── */
 .spec{
   display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
@@ -342,6 +347,30 @@ footer .sp{margin-left:auto}
     </div>
   </section>
 
+  <!-- 4b ── intelligence -->
+  <section class="item">
+    <div class="tick" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M3.5 10.5 L8 15 L16.5 5"/></svg></div>
+    <div class="body">
+      <p class="eyebrow">Busy B Intelligence</p>
+      <h2>A little help with the pile, all on your device.</h2>
+      <p class="section-lede">Busy B Pro adds three quiet uses of on-device intelligence, built with <a href="https://www.apple.com/apple-intelligence/" target="_blank" rel="noopener">Apple Intelligence</a>. Every one runs on your iPhone, iPad, or Mac. Nothing about your tasks is sent to a server, ours or anyone else's, and nothing you put in Busy B is used to train a model.</p>
+      <ul class="spec" style="margin-bottom:32px">
+        <li><span><b>Daily briefing</b>: open the app to a short read of what actually matters today, drawn from your own list</span></li>
+        <li><span><b>One-tap filing</b>: sort a full Running list inbox into the right categories in a single tap, with a review step before anything moves</span></li>
+        <li><span><b>Loose Ends</b>: a look at the older tasks that have stalled, each with a suggested next step</span></li>
+      </ul>
+      <div class="duo">
+        <div class="phone">
+          <img src="img/iphone-ai-briefing.jpg" width="760" height="1647" alt="The daily briefing on iPhone: a card headed Today, three tasks worth focusing on, and a note about overdue tasks worth a look." loading="lazy">
+        </div>
+        <div class="phone">
+          <img src="img/iphone-ai-filing.jpg" width="760" height="1647" alt="One-tap filing on iPhone: ten unfiled tasks, each with a category the app has proposed, and a File 10 button." loading="lazy">
+        </div>
+      </div>
+      <p class="note">The briefing, one-tap filing and Loose Ends need a device that supports Apple Intelligence, with it turned on in Settings. Everything else in Busy B works on every supported device.</p>
+    </div>
+  </section>
+
   <!-- 5 ── iPad -->
   <section class="item">
     <div class="tick" aria-hidden="true"><svg viewBox="0 0 20 20"><path d="M3.5 10.5 L8 15 L16.5 5"/></svg></div>
@@ -387,10 +416,12 @@ footer .sp{margin-left:auto}
         <li><span><b>iPad Command Center</b>: a three-pane layout built for iPad</span></li>
         <li><span><b>iCloud sync</b>: your tasks, everywhere, automatically</span></li>
         <li><span><b>Nine themes</b>: hand-crafted palettes, each with dark mode</span></li>
-        <li><span><b>Daily briefing</b>: a morning summary of the day ahead</span></li>
+        <li><span><b>Daily briefing</b>: an on-device read of what matters today</span></li>
+        <li><span><b>One-tap filing</b>: file a whole inbox into categories in a tap</span></li>
+        <li><span><b>Loose Ends</b>: surfaces older tasks that have stalled</span></li>
         <li><span><b>Mac app</b>: a native window with keyboard shortcuts, not a stretched iPad app</span></li>
       </ul>
-      <p class="note">Unlimited categories, subcategories, the full theme collection and the daily briefing come with Busy B Pro, available inside the app.</p>
+      <p class="note">Unlimited categories, subcategories, the full theme collection and the Busy B Intelligence features come with Busy B Pro, available inside the app.</p>
     </div>
   </section>
 
