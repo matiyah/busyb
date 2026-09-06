@@ -8,7 +8,7 @@
 <meta property="og:description" content="A warm, visual to-do app for people juggling everyday life. Free on iPhone, iPad, and Mac.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://busybplanner.com/">
-<meta property="og:image" content="https://busybplanner.com/img/ipad-dashboard.jpg">
+<meta property="og:image" content="https://busybplanner.com/img/og-card.jpg">
 <link rel="canonical" href="https://busybplanner.com/">
 <meta name="theme-color" content="#F4EEE4">
 <link rel="icon" href="icon.png">
@@ -38,6 +38,7 @@
   --shadow:0 1px 2px rgba(60,40,20,.05), 0 12px 32px -14px rgba(60,40,20,.22);
   --shadow-lift:0 2px 4px rgba(60,40,20,.06), 0 30px 64px -22px rgba(60,40,20,.36);
   --bezel:#241F1C;
+  --dshadow:drop-shadow(0 16px 34px rgba(60,40,20,.24));
   --display:"Bricolage Grotesque","Avenir Next",Avenir,system-ui,sans-serif;
   --body:"Figtree","SF Pro Text",-apple-system,system-ui,sans-serif;
 }
@@ -59,6 +60,7 @@
     --shadow:0 1px 2px rgba(0,0,0,.4), 0 12px 32px -14px rgba(0,0,0,.7);
     --shadow-lift:0 2px 4px rgba(0,0,0,.45), 0 30px 64px -22px rgba(0,0,0,.8);
     --bezel:#4B423C;
+    --dshadow:drop-shadow(0 16px 40px rgba(0,0,0,.55));
   }
 }
 :root[data-theme="dark"]{
@@ -78,6 +80,7 @@
   --shadow:0 1px 2px rgba(0,0,0,.4), 0 12px 32px -14px rgba(0,0,0,.7);
   --shadow-lift:0 2px 4px rgba(0,0,0,.45), 0 30px 64px -22px rgba(0,0,0,.8);
   --bezel:#4B423C;
+  --dshadow:drop-shadow(0 16px 40px rgba(0,0,0,.55));
 }
 
 *{box-sizing:border-box}
@@ -158,24 +161,18 @@ h1 em{font-style:normal;color:var(--clay)}
 .price-note b{color:var(--ink-2);font-weight:600}
 
 /* ── device frames ────────────────────────────────────────────────── */
-.phone{
-  background:var(--bezel);border-radius:42px;padding:9px;
-  box-shadow:var(--shadow-lift);width:100%;
-}
-.phone img{border-radius:34px;width:100%}
-.tablet{
-  background:var(--bezel);border-radius:26px;padding:11px;
-  box-shadow:var(--shadow-lift);width:100%;
-}
-.tablet img{border-radius:15px;width:100%}
-.macwindow{border-radius:12px;overflow:hidden;box-shadow:var(--shadow-lift);width:100%}
-.macwindow img{display:block;width:100%}
+/* Device shots ship with Apple's product bezel already composited in
+   (screenshots/appstore-screenshots.py -> place_in_bezel), on a transparent
+   ground. No drawn frame here, just a silhouette drop-shadow that follows
+   the device outline instead of boxing it. */
+.phone,.tablet,.macwindow{width:100%}
+.phone img,.tablet img,.macwindow img{display:block;width:100%;filter:var(--dshadow)}
 
 /* hero stage: iPad with the iPhone in front of it */
-.stage-wrap{--s:1;height:calc(505px * var(--s));margin-block:6px 2px;overflow:hidden}
-.stage{width:822px;height:505px;position:relative;transform:scale(var(--s));transform-origin:top left}
-.stage .tablet{position:absolute;left:0;top:44px;width:600px}
-.stage .phone{position:absolute;right:0;top:0;width:240px}
+.stage-wrap{--s:1;height:calc(534px * var(--s));margin-block:6px 2px;overflow:visible}
+.stage{width:822px;height:534px;position:relative;transform:scale(var(--s));transform-origin:top left}
+.stage .tablet{position:absolute;left:0;top:40px;width:644px}
+.stage .phone{position:absolute;right:0;top:0;width:252px}
 @media (max-width:1040px){.stage-wrap{--s:.86}}
 @media (max-width:900px){.stage-wrap{--s:.72}}
 @media (max-width:760px){.stage-wrap{--s:.56}}
@@ -301,10 +298,10 @@ footer .sp{margin-left:auto}
       <div class="stage-wrap">
         <div class="stage">
           <div class="tablet">
-            <img src="img/ipad-dashboard.jpg" width="1760" height="1320" alt="Busy B on iPad: a sidebar of smart lists and categories, today's tasks in the centre, and the week ahead on the right.">
+            <img src="img/ipad-dashboard.webp" width="1500" height="1149" alt="Busy B on iPad: a sidebar of smart lists and categories, today's tasks in the centre, and the week ahead on the right.">
           </div>
           <div class="phone">
-            <img src="img/iphone-main.jpg" width="760" height="1651" alt="Busy B on iPhone: Running list, Today/Tomorrow and Flagged tiles above pinned categories.">
+            <img src="img/iphone-main.webp" width="900" height="1865" alt="Busy B on iPhone: Running list, Today/Tomorrow and Flagged tiles above pinned categories.">
           </div>
         </div>
       </div>
@@ -323,7 +320,7 @@ footer .sp{margin-left:auto}
           <p class="section-lede">Capturing never gets in the way of doing. The add bar sits on every screen, and Siri and Shortcuts work too.</p>
         </div>
         <div class="phone">
-          <img src="img/iphone-running.jpg" width="760" height="1651" alt="The Running list on iPhone: five unfiled tasks with flags and due dates, and an add bar at the bottom." loading="lazy">
+          <img src="img/iphone-running.webp" width="900" height="1865" alt="The Running list on iPhone: five unfiled tasks with flags and due dates, and an add bar at the bottom." loading="lazy">
         </div>
       </div>
     </div>
@@ -341,7 +338,7 @@ footer .sp{margin-left:auto}
           <p class="section-lede">When one list gets crowded, split it into subcategories: Emma, Noah, School forms. Swipe to flag what matters, drag and drop to reorder, and set a due date so nothing slips.</p>
         </div>
         <div class="phone">
-          <img src="img/iphone-category.jpg" width="760" height="1651" alt="The Kids category on iPhone, split into Emma, Noah and School forms subcategories." loading="lazy">
+          <img src="img/iphone-category.webp" width="900" height="1865" alt="The Kids category on iPhone, split into Emma, Noah and School forms subcategories." loading="lazy">
         </div>
       </div>
     </div>
@@ -361,10 +358,10 @@ footer .sp{margin-left:auto}
       </ul>
       <div class="duo">
         <div class="phone">
-          <img src="img/iphone-ai-briefing.jpg" width="760" height="1647" alt="The daily briefing on iPhone: a card headed Today, three tasks worth focusing on, and a note about overdue tasks worth a look." loading="lazy">
+          <img src="img/iphone-ai-briefing.webp" width="900" height="1865" alt="The daily briefing on iPhone: a card headed Today, three tasks worth focusing on, and a note about overdue tasks worth a look." loading="lazy">
         </div>
         <div class="phone">
-          <img src="img/iphone-ai-filing.jpg" width="760" height="1647" alt="One-tap filing on iPhone: ten unfiled tasks, each with a category the app has proposed, and a File 10 button." loading="lazy">
+          <img src="img/iphone-ai-filing.webp" width="900" height="1865" alt="One-tap filing on iPhone: ten unfiled tasks, each with a category the app has proposed, and a File 10 button." loading="lazy">
         </div>
       </div>
       <p class="note">The briefing, one-tap filing and Loose Ends need a device that supports Apple Intelligence, with it turned on in Settings. Everything else in Busy B works on every supported device.</p>
@@ -379,7 +376,7 @@ footer .sp{margin-left:auto}
       <h2>A real iPad app, not a stretched phone.</h2>
       <p class="section-lede" style="margin-bottom:30px">The Command Center is a full three-pane layout: smart lists, your tasks, and the details beside them. Week view lays out all seven days at once, and you drag a task between days to reschedule it.</p>
       <div class="tablet">
-        <img src="img/ipad-week.jpg" width="1760" height="1320" alt="Week view on iPad: seven day columns filled with task cards, and an undated tray along the bottom to drag from." loading="lazy">
+        <img src="img/ipad-week.webp" width="1500" height="1149" alt="Week view on iPad: seven day columns filled with task cards, and an undated tray along the bottom to drag from." loading="lazy">
       </div>
     </div>
   </section>
@@ -392,7 +389,7 @@ footer .sp{margin-left:auto}
       <h2>Now a real Mac app, not an iPad on a bigger screen.</h2>
       <p class="section-lede" style="margin-bottom:30px">A native window with its own menu bar, and keyboard shortcuts (&#8984;1&ndash;&#8984;5) to jump straight to a smart list. Same sidebar, same tasks, same iCloud account as your phone and iPad.</p>
       <div class="macwindow">
-        <img src="img/mac-dashboard.jpg" width="1760" height="1112" alt="Busy B on Mac: a sidebar of smart lists and categories beside today's tasks and the week ahead, in a native windowed app." loading="lazy">
+        <img src="img/mac-dashboard.webp" width="1900" height="1160" alt="Busy B on Mac: a sidebar of smart lists and categories beside today's tasks and the week ahead, in a native windowed app." loading="lazy">
       </div>
     </div>
   </section>
