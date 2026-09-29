@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Busy B Planner on the App Store</title>
+<!-- busybplanner.com/app: short link for the Instagram bio. GitHub Pages
+     can't do server redirects, so this page forwards straight to the App
+     Store campaign link. Default campaign is ig_bio; pass ?ct=<label> to
+     reuse this short link for another source (e.g. /app?ct=tt_bio). -->
+<meta http-equiv="refresh" content="0; url=https://apps.apple.com/app/apple-store/id6768819696?pt=128884855&amp;ct=ig_bio&amp;mt=8">
+<script>
+  (function () {
+    var ct = new URLSearchParams(location.search).get("ct") || "ig_bio";
+    ct = ct.replace(/[^A-Za-z0-9_-]/g, "").slice(0, 40) || "ig_bio";
+    location.replace("https://apps.apple.com/app/apple-store/id6768819696?pt=128884855&ct=" + ct + "&mt=8");
+  })();
+</script>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+         max-width: 680px; margin: 0 auto; padding: 40px 20px; line-height: 1.6;
+         color: #2A2520; background: #F4EEE4; text-align: center; }
+  a { color: #C2603F; }
+</style>
+</head>
+<body>
+<p>Opening Busy B Planner in the App Store…</p>
+<p><a href="https://apps.apple.com/app/apple-store/id6768819696?pt=128884855&amp;ct=ig_bio&amp;mt=8">Tap here if nothing happens</a></p>
+</body>
+</html>
