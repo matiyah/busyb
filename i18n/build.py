@@ -25,6 +25,7 @@ import sys
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "i18n"))
 import en  # noqa: E402
+import support_tr  # noqa: E402
 
 SITE = "https://busybplanner.com"
 
@@ -114,10 +115,31 @@ def localize(src, folder, html_lang, og_locale, cc, badge):
                   f'<meta property="og:url" content="{url(folder)}">\n<meta property="og:locale" content="{og_locale}">', 1)
     s = s.replace('href="icon.png"', 'href="../icon.png"')
     s = s.replace('src="img/', f'src="../img/{folder}/')
-    s = s.replace('href="support.html"', 'href="../support.html"').replace('href="privacy.html"', 'href="../privacy.html"')
+    s = s.replace('href="privacy.html"', 'href="../privacy.html"')   # privacy is English only for now
     s = s.replace("apps.apple.com/us/app/", f"apps.apple.com/{cc}/app/").replace("ct=website&", f"ct=website_{folder}&")
     s = s.replace("/black/en-us?", f"/black/{badge}?")
     return s
+
+
+def build_support(folder, html_lang):
+    src = (ROOT / "support.html").read_text(encoding="utf-8")
+    strings = support_tr.LANGS[folder]
+    if len(strings) != len(support_tr.EN):
+        raise SystemExit(f"support_tr[{folder}]: {len(strings)} strings, expected {len(support_tr.EN)}")
+    order = sorted(range(len(support_tr.EN)), key=lambda i: -len(support_tr.EN[i]))
+    for i in order:
+        e = support_tr.EN[i]
+        short = len(e) <= 45 and "<" not in e
+        pat, rep = (f">{e}<", f">\x00{i}\x00<") if short else (e, f"\x00{i}\x00")
+        if src.count(pat) == 0:
+            raise SystemExit(f"[support {folder}] English string #{i} not found: {e[:50]!r}")
+        src = src.replace(pat, rep)
+    for i, t in enumerate(strings):
+        src = src.replace(f"\x00{i}\x00", t)
+    src = src.replace('<html lang="en">', f'<html lang="{html_lang}">', 1)
+    src = src.replace('href="privacy.html"', 'href="../privacy.html"')
+    (ROOT / folder / "support.html").write_text(src, encoding="utf-8")
+    print("wrote", f"{folder}/support.html")
 
 
 def main():
@@ -137,6 +159,7 @@ def main():
         out.mkdir(exist_ok=True)
         (out / "index.html").write_text(page, encoding="utf-8")
         print("wrote", f"{folder}/index.html")
+        build_support(folder, html_lang)
 
 
 if __name__ == "__main__":
