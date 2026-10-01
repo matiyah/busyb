@@ -73,7 +73,7 @@ T = [
 "Deine Aufgabendaten gehören dir, privat über deinen eigenen iCloud-Account synchronisiert, direkt zwischen deinen Geräten. Du musst nichts anlegen und dich nirgends anmelden, und es liegt keine Kopie deiner Woche auf einem Server von uns, weil wir keinen betreiben.",
 "Fang mit der heutigen Liste an.",
 "Kostenlos im App&nbsp;Store.<br>iPhone, iPad und Mac.",
-"Fragen, Fehler oder eine Idee für die App? Schreib an\n      <a href=\"mailto:support@busybplanner.com\">support@busybplanner.com</a> und ein Mensch antwortet,\n      meist innerhalb von ein, zwei Tagen. Häufige Fragen sind schon auf der\n      <a href=\"support.html\">Support-Seite</a> (auf Englisch) beantwortet.",
+"Fragen, Fehler oder eine Idee für die App? Schreib an\n      <a href=\"mailto:support@busybplanner.com\">support@busybplanner.com</a> und ein Mensch antwortet,\n      meist innerhalb von ein, zwei Tagen. Häufige Fragen sind schon auf der\n      <a href=\"support.html\">Support-Seite</a> beantwortet.",
 "<a href=\"support.html\">Support</a>",
 "<a href=\"privacy.html\">Datenschutzerklärung</a>",
 "Gemacht für die Menschen, die alles zusammenhalten.",

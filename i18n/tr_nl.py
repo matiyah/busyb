@@ -73,7 +73,7 @@ T = [
 "Je taakgegevens blijven van jou, privé gesynchroniseerd via je eigen iCloud-account, rechtstreeks tussen je apparaten. Er is niets aan te maken, nergens in te loggen en geen kopie van je week op een server van ons, want we hebben er geen.",
 "Begin met de lijst van vandaag.",
 "Gratis in de App&nbsp;Store.<br>iPhone, iPad en Mac.",
-"Vragen, bugs of een idee voor de app? Schrijf naar\n      <a href=\"mailto:support@busybplanner.com\">support@busybplanner.com</a> en een mens antwoordt,\n      meestal binnen een dag of twee. Veelgestelde vragen worden al beantwoord op de\n      <a href=\"support.html\">supportpagina</a> (in het Engels).",
+"Vragen, bugs of een idee voor de app? Schrijf naar\n      <a href=\"mailto:support@busybplanner.com\">support@busybplanner.com</a> en een mens antwoordt,\n      meestal binnen een dag of twee. Veelgestelde vragen worden al beantwoord op de\n      <a href=\"support.html\">supportpagina</a>.",
 "<a href=\"support.html\">Support</a>",
 "<a href=\"privacy.html\">Privacybeleid</a>",
 "Gemaakt voor de mensen die alles bij elkaar houden.",
