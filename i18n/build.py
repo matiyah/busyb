@@ -1,0 +1,143 @@
+#!/usr/bin/env python3
+"""
+Build the localized copies of the home page.
+
+    python3 i18n/build.py
+
+index.html (English) is the source of truth. Every language page is that file
+with its text swapped for the matching entry in i18n/tr_<lang>.py, and its asset
+paths, store links and hreflang tags adjusted. Edit the English page, add or
+change the matching entry in en.py and every tr_*.py (same order), then run this.
+It also refreshes the hreflang block and the language switcher in index.html.
+
+Outputs: <folder>/index.html for every language except English (root).
+Images come from img/<folder>/ (root img/ for English).
+
+Legal pages (privacy, terms, support) are English only; localized pages link
+to the English ones.
+"""
+
+import importlib
+import pathlib
+import re
+import sys
+
+ROOT = pathlib.Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT / "i18n"))
+import en  # noqa: E402
+
+SITE = "https://busybplanner.com"
+
+# folder, <html lang>, og:locale, store country, badge locale, module, switcher label
+LANGS = [
+    ("",      "en",    "en_US", "us", "en-us", None,        "English"),
+    ("en-gb", "en-GB", "en_GB", "gb", "en-us", "tr_en_gb", "English (UK)"),
+    ("fr",    "fr",    "fr_FR", "fr", "fr-fr", "tr_fr",    "Français"),
+    ("de",    "de",    "de_DE", "de", "de-de", "tr_de",    "Deutsch"),
+    ("es",    "es",    "es_ES", "es", "es-es", "tr_es",    "Español (España)"),
+    ("es-mx", "es-MX", "es_MX", "mx", "es-mx", "tr_es_mx", "Español (México)"),
+    ("it",    "it",    "it_IT", "it", "it-it", "tr_it",    "Italiano"),
+    ("nl",    "nl",    "nl_NL", "nl", "nl-nl", "tr_nl",    "Nederlands"),
+    ("pt-br", "pt-BR", "pt_BR", "br", "pt-br", "tr_pt_br", "Português (Brasil)"),
+]
+# English strings that sit inside an attribute; every other short string is
+# matched only as a whole element text (>text<) so "Capture" can't hit "Capturing".
+ATTR = {6}
+CSS = ("footer .langs{display:flex;flex-wrap:wrap;gap:4px 14px;flex-basis:100%}\n"
+       "footer .langs a[aria-current]{color:var(--ink);font-weight:600;text-decoration:none}\n")
+
+
+def url(folder):
+    return f"{SITE}/{folder}/" if folder else f"{SITE}/"
+
+
+def hreflang_block():
+    lines = ["<!--HREFLANG-->"]
+    for folder, html_lang, _, _, _, _, _ in LANGS:
+        lines.append(f'<link rel="alternate" hreflang="{html_lang}" href="{url(folder)}">')
+    lines.append(f'<link rel="alternate" hreflang="x-default" href="{url("")}">')
+    lines.append("<!--/HREFLANG-->")
+    return "\n".join(lines)
+
+
+def switcher(current):
+    links = []
+    for folder, html_lang, _, _, _, _, label in LANGS:
+        href = f"/{folder}/" if folder else "/"
+        cur = ' aria-current="page"' if folder == current else ""
+        links.append(f'<a href="{href}" hreflang="{html_lang}" lang="{html_lang}"{cur}>{label}</a>')
+    return "<!--LANGS-->" + " ".join(links) + "<!--/LANGS-->"
+
+
+def ensure_markers(src):
+    """First run only: add the hreflang block, the switcher and its CSS to the English page."""
+    if "<!--HREFLANG-->" not in src:
+        src = src.replace('<meta name="theme-color"', hreflang_block() + '\n<meta name="theme-color"', 1)
+    if "<!--LANGS-->" not in src:
+        src = src.replace('<span class="sp">', f'<span class="langs">{switcher("")}</span>\n    <span class="sp">', 1)
+    if "footer .langs" not in src:
+        src = src.replace("footer .sp{margin-left:auto}", "footer .sp{margin-left:auto}\n" + CSS.rstrip("\n"), 1)
+    return src
+
+
+def refresh_markers(src, current):
+    src = re.sub(r"<!--HREFLANG-->.*?<!--/HREFLANG-->", lambda m: hreflang_block(), src, flags=re.S)
+    src = re.sub(r"<!--LANGS-->.*?<!--/LANGS-->", lambda m: switcher(current), src, flags=re.S)
+    return src
+
+
+def translate(src, strings, folder):
+    # Pass 1: longest English strings first, replaced by placeholders so a short
+    # string can never match inside a longer one that was already translated.
+    order = sorted(range(len(en.EN)), key=lambda i: -len(en.EN[i]))
+    for i in order:
+        e = en.EN[i]
+        if len(e) <= 45 and "<" not in e and i not in ATTR:
+            pat, rep = f">{e}<", f">\x00{i}\x00<"
+        else:
+            pat, rep = e, f"\x00{i}\x00"
+        n = src.count(pat)
+        if n == 0:
+            raise SystemExit(f"[{folder or 'en'}] English string #{i} not found in index.html: {e[:60]!r}")
+        src = src.replace(pat, rep)
+    # Pass 2: placeholders become the translation.
+    for i, t in enumerate(strings):
+        src = src.replace(f"\x00{i}\x00", t)
+    return src
+
+
+def localize(src, folder, html_lang, og_locale, cc, badge):
+    s = src
+    s = s.replace('<html lang="en">', f'<html lang="{html_lang}">', 1)
+    s = s.replace('<link rel="canonical" href="https://busybplanner.com/">', f'<link rel="canonical" href="{url(folder)}">', 1)
+    s = s.replace('<meta property="og:url" content="https://busybplanner.com/">',
+                  f'<meta property="og:url" content="{url(folder)}">\n<meta property="og:locale" content="{og_locale}">', 1)
+    s = s.replace('href="icon.png"', 'href="../icon.png"')
+    s = s.replace('src="img/', f'src="../img/{folder}/')
+    s = s.replace('href="support.html"', 'href="../support.html"').replace('href="privacy.html"', 'href="../privacy.html"')
+    s = s.replace("apps.apple.com/us/app/", f"apps.apple.com/{cc}/app/").replace("ct=website&", f"ct=website_{folder}&")
+    s = s.replace("/black/en-us?", f"/black/{badge}?")
+    return s
+
+
+def main():
+    path = ROOT / "index.html"
+    src = ensure_markers(path.read_text(encoding="utf-8"))
+    path.write_text(refresh_markers(src, ""), encoding="utf-8")
+    for folder, html_lang, og_locale, cc, badge, module, _ in LANGS:
+        if not folder:
+            continue
+        strings = importlib.import_module(module).T
+        if len(strings) != len(en.EN):
+            raise SystemExit(f"{module}: {len(strings)} strings, expected {len(en.EN)}")
+        page = translate(src, strings, folder)
+        page = localize(page, folder, html_lang, og_locale, cc, badge)
+        page = refresh_markers(page, folder)
+        out = ROOT / folder
+        out.mkdir(exist_ok=True)
+        (out / "index.html").write_text(page, encoding="utf-8")
+        print("wrote", f"{folder}/index.html")
+
+
+if __name__ == "__main__":
+    main()
