@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-# Spain. es-MX is derived from this list in tr_es_mx.py.
 T = [
 "Busy B Planner es una app de tareas cálida y visual para quienes hacen malabares con el día a día. Vuelca todo en la Lista general y clasifícalo cuando quieras. Gratis en iPhone, iPad y Mac, sincronizada de forma privada con iCloud.",
 "Una app de tareas cálida y visual para quienes hacen malabares con el día a día. Gratis en iPhone, iPad y Mac.",
@@ -9,8 +8,7 @@ T = [
 "<b>Gratis para descargar.</b><br>iPhone, iPad y Mac. Sin cuenta, sin registro.",
 "Descárgala en el App Store",
 "Una lista, todas las pantallas",
-"Busy B en iPad: una barra lateral con listas inteligentes y categorías, las tareas de hoy en el centro y la semana que viene a la derecha.",
-"Busy B en iPhone: los mosaicos Lista general, Hoy / Mañana y Prioritarias sobre las categorías fijadas.",
+"Busy B en Mac, iPad e iPhone: tres pantallas con la misma lista, sincronizadas por iCloud.",
 "Anota",
 "Vuelca todo ahora. Clasifica después.",
 "La Lista general es tu bandeja de entrada. Escribe lo que sea en el segundo en que se te ocurra. Sin categoría, sin fecha, sin decisiones de antemano. Luego clasifícalo cuando quieras, quizá el domingo.",
