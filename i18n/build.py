@@ -41,6 +41,10 @@ LANGS = [
     ("nl",    "nl",    "nl_NL", "nl", "nl-nl", "tr_nl",    "Nederlands"),
     ("pt-br", "pt-BR", "pt_BR", "br", "pt-br", "tr_pt_br", "Português (Brasil)"),
 ]
+# Flag per language (regional-indicator emoji; platforms without flag glyphs show
+# the country letters, and the language name is always next to it).
+FLAG = {"": "🇺🇸", "en-gb": "🇬🇧", "fr": "🇫🇷", "de": "🇩🇪", "es": "🇪🇸",
+        "es-mx": "🇲🇽", "it": "🇮🇹", "nl": "🇳🇱", "pt-br": "🇧🇷"}
 # English strings that sit inside an attribute; every other short string is
 # matched only as a whole element text (>text<) so "Capture" can't hit "Capturing".
 ATTR = {6}
@@ -68,6 +72,51 @@ def switcher(current):
         cur = ' aria-current="page"' if folder == current else ""
         links.append(f'<a href="{href}" hreflang="{html_lang}" lang="{html_lang}"{cur}>{label}</a>')
     return "<!--LANGS-->" + " ".join(links) + "<!--/LANGS-->"
+
+
+MENU_CSS = """/*LANGCSS*/
+.langmenu{position:absolute;top:14px;right:18px;z-index:50;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;font-size:14px}
+.langmenu summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;background:var(--surface,#fff);color:var(--ink,#2A2520);border:1px solid var(--rule,rgba(60,40,20,.14));box-shadow:0 1px 2px rgba(60,40,20,.06)}
+.langmenu summary::-webkit-details-marker{display:none}
+.langmenu summary:focus-visible,.langmenu a:focus-visible{outline:2px solid var(--clay,#C2603F);outline-offset:2px}
+.langmenu .fl{font-size:18px;line-height:1}
+.langmenu .chev{width:10px;height:10px;opacity:.6;transition:transform .15s}
+.langmenu details[open] .chev{transform:rotate(180deg)}
+.langmenu ul{list-style:none;margin:6px 0 0;padding:6px;position:absolute;right:0;min-width:210px;border-radius:14px;background:var(--surface,#fff);border:1px solid var(--rule,rgba(60,40,20,.14));box-shadow:0 12px 32px -10px rgba(60,40,20,.3)}
+.langmenu li a{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:9px;color:var(--ink,#2A2520);text-decoration:none}
+.langmenu li a:hover{background:var(--clay-soft,#F2D9CC)}
+.langmenu li a[aria-current]{font-weight:600}
+@media (max-width:620px){.langmenu{top:10px;right:12px}.langmenu .nm{display:none}}
+/*/LANGCSS*/"""
+
+MENU_JS = """<script>(function(){var d=document.querySelector('.langmenu details');if(!d)return;document.addEventListener('click',function(e){if(!d.contains(e.target))d.open=false});document.addEventListener('keydown',function(e){if(e.key==='Escape')d.open=false})})();</script>"""
+
+
+def lang_menu(current, page):
+    """Flag menu. `page` is "" for the home page or "support.html"."""
+    cur_flag, cur_label = FLAG[current], next(l[6] for l in LANGS if l[0] == current)
+    items = []
+    for folder, html_lang, _, _, _, _, label in LANGS:
+        href = (f"/{folder}/" if folder else "/") + page
+        mark = ' aria-current="page"' if folder == current else ""
+        items.append(f'<li><a href="{href}" hreflang="{html_lang}" lang="{html_lang}"{mark}><span class="fl">{FLAG[folder]}</span><span>{label}</span></a></li>')
+    chev = '<svg class="chev" viewBox="0 0 10 10" aria-hidden="true"><path d="M1.5 3.5 L5 7 L8.5 3.5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+    return ("<!--LANGMENU--><div class=\"langmenu\"><details><summary aria-label=\"Language: " + cur_label + "\">"
+            f'<span class="fl">{cur_flag}</span><span class="nm">{cur_label}</span>{chev}</summary><ul>' + "".join(items)
+            + "</ul></details></div>" + MENU_JS + "<!--/LANGMENU-->")
+
+
+def ensure_menu(src):
+    """First run only: add the menu CSS and placeholder to a source page."""
+    if "/*LANGCSS*/" not in src:
+        src = src.replace("</style>", MENU_CSS + "\n</style>", 1)
+    if "<!--LANGMENU-->" not in src:
+        src = src.replace("<body>", "<body>\n<!--LANGMENU--><!--/LANGMENU-->", 1)
+    return src
+
+
+def refresh_menu(src, current, page):
+    return re.sub(r"<!--LANGMENU-->.*?<!--/LANGMENU-->", lambda m: lang_menu(current, page), src, flags=re.S)
 
 
 def ensure_markers(src):
@@ -138,14 +187,18 @@ def build_support(folder, html_lang):
         src = src.replace(f"\x00{i}\x00", t)
     src = src.replace('<html lang="en">', f'<html lang="{html_lang}">', 1)
     src = src.replace('href="privacy.html"', 'href="../privacy.html"')
+    src = refresh_menu(src, folder, "support.html")
     (ROOT / folder / "support.html").write_text(src, encoding="utf-8")
     print("wrote", f"{folder}/support.html")
 
 
 def main():
     path = ROOT / "index.html"
-    src = ensure_markers(path.read_text(encoding="utf-8"))
-    path.write_text(refresh_markers(src, ""), encoding="utf-8")
+    src = ensure_menu(ensure_markers(path.read_text(encoding="utf-8")))
+    path.write_text(refresh_menu(refresh_markers(src, ""), "", ""), encoding="utf-8")
+    spath = ROOT / "support.html"
+    ssrc = ensure_menu(spath.read_text(encoding="utf-8"))
+    spath.write_text(refresh_menu(ssrc, "", "support.html"), encoding="utf-8")
     for folder, html_lang, og_locale, cc, badge, module, _ in LANGS:
         if not folder:
             continue
@@ -154,7 +207,7 @@ def main():
             raise SystemExit(f"{module}: {len(strings)} strings, expected {len(en.EN)}")
         page = translate(src, strings, folder)
         page = localize(page, folder, html_lang, og_locale, cc, badge)
-        page = refresh_markers(page, folder)
+        page = refresh_menu(refresh_markers(page, folder), folder, "")
         out = ROOT / folder
         out.mkdir(exist_ok=True)
         (out / "index.html").write_text(page, encoding="utf-8")
